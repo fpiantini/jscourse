@@ -45,6 +45,7 @@ console.log(firstName + ' ' + lastName);
 /*
  * Basic operators
  */
+/*
 var firstName = 'Francesco';
 var ageFrancesco = 54;
 var ageEdoardo = 11;
@@ -69,3 +70,34 @@ console.log(typeof firstName);
 
 var x;
 console.log(typeof x);
+*/
+
+/*
+ * Operators precedence
+ */
+var now = 2018;
+var yearFrancesco = 1964
+var yearEdoardo = 2006;
+var fullAge = 18;
+
+var francescoIsFullAge = (now - yearFrancesco) >= fullAge
+var edoardoIsFullAge = (now - yearEdoardo) >= fullAge
+
+console.log('Francesco is ' + (now - yearFrancesco) + ' years old...');
+if (francescoIsFullAge) {
+  console.log('... and *it is* full age');  
+}
+else {
+  console.log('... and it is *not* full age');  
+}
+
+console.log('Edoardo is ' + (now - yearEdoardo) + ' years old...');
+if (edoardoIsFullAge) {
+  console.log('... and *it is* full age');  
+}
+else {
+  console.log('... and it is *not* full age');  
+}
+
+var average = ((now - yearFrancesco) + (now - yearEdoardo)) / 2;
+console.log('average number of years: ' + average)
