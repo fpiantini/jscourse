@@ -75,6 +75,7 @@ console.log(typeof x);
 /*
  * Operators precedence
  */
+/*
 var now = 2018;
 var yearFrancesco = 1964
 var yearEdoardo = 2006;
@@ -101,3 +102,22 @@ else {
 
 var average = ((now - yearFrancesco) + (now - yearEdoardo)) / 2;
 console.log('average number of years: ' + average)
+*/
+
+
+
+/*
+ * Example of a Function Expression
+ */
+
+var computeAverage = function(elems) {
+  var ndx;
+  var ave = 0;
+  for (ndx = 0; ndx < elems.length; ndx += 1) {
+    ave += elems[ndx] / elems.length;
+  }
+  return ave;
+}
+
+console.log("average test: " + computeAverage([1,2,3,4,5]));
+
