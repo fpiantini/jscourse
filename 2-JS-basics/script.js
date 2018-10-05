@@ -109,7 +109,7 @@ console.log('average number of years: ' + average)
 /*
  * Example of a Function Expression
  */
-
+/*
 var computeAverage = function(elems) {
   var ndx;
   var ave = 0;
@@ -120,4 +120,32 @@ var computeAverage = function(elems) {
 }
 
 console.log("average test: " + computeAverage([1,2,3,4,5]));
+*/
+/*
+ * Objects
+ */
+var person = {
+  firstName: 'Francesco',
+  lastName: 'Piantini',
+  birthYear: 1964,
+  family: ['Roberta', 'Edoardo'],
+  job: 'programmer',
+  isMarried: false,
+  address: {
+    streetAddress: 'Via Tommaso Campanella, 71',
+    cap: 50019,
+    city: 'Sesto Fiorentino',
+    province: 'Firenze'
+  }
+};
 
+console.log(person);
+
+console.log(person.firstName);
+console.log(person['lastName']);
+
+// Mutate data
+person.job = 'chess player';
+person['isMarried'] = true;
+
+console.log(person);
