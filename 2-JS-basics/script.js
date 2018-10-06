@@ -121,6 +121,8 @@ var computeAverage = function(elems) {
 
 console.log("average test: " + computeAverage([1,2,3,4,5]));
 */
+
+
 /*
  * Objects
  */
@@ -136,6 +138,10 @@ var person = {
     cap: 50019,
     city: 'Sesto Fiorentino',
     province: 'Firenze'
+  },
+  calcAge: function () {
+    'use strict';
+    this.age = 2018 - this.birthYear;
   }
 };
 
@@ -148,4 +154,5 @@ console.log(person['lastName']);
 person.job = 'chess player';
 person['isMarried'] = true;
 
+person.calcAge();
 console.log(person);
