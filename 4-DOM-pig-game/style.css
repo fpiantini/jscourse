@@ -42,7 +42,10 @@ body {
     width: 50%;
     float: left;
     height: 600px;
-    padding: 100px;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    padding-left: 70px;
+    padding-right: 70px;
 }
 
 
@@ -79,7 +82,7 @@ body {
     position: absolute;
     color: #EB4D4D;
     top: -7px;
-    right: 10px;
+    right: 0px;
     
 }
 
@@ -105,7 +108,7 @@ body {
 
 button {
     position: absolute;
-    width: 200px;
+    width: 250px;
     left: 50%;
     transform: translateX(-50%);
     color: #555;
