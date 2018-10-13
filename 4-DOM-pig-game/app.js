@@ -13,7 +13,35 @@ var document;
 var scores, roundScore, activePlayer;
 var gameIsActive;
 var previousRoll;
+var targetScore;
 
+// function sleep(milliseconds) {
+//   'use strict';
+//   var i, start;
+//   start = new Date().getTime();
+//   for (i = 0; i < 1e7; i += 1) {
+//     if ((new Date().getTime() - start) > milliseconds) {
+//       break;
+//     }
+//   }
+// }
+// var forceRedraw = function (element) {
+// 
+//   'use strict';
+//   var n, disp;
+//   if (!element) { return; }
+// 
+//   n = document.createTextNode(' ');
+//   disp = element.style.display;  // don't worry about previous display style
+// 
+//   element.appendChild(n);
+//   element.style.display = 'none';
+// 
+//   setTimeout(function () {
+//     element.style.display = disp;
+//     n.parentNode.removeChild(n);
+//   }, 20); // you can play with this timeout to make it as short as possible
+// };
 
 function initGame() {
   'use strict';
@@ -22,6 +50,7 @@ function initGame() {
   activePlayer = 0;
   gameIsActive = 1;
   previousRoll = 0;
+  targetScore = 100;
 
   // example of CSS modification: remove the dice from page.
   // To select the dice select th class 'dice' using the
@@ -30,7 +59,7 @@ function initGame() {
   // use querySelector sometimes in this program just for
   // learning purposes
   // Using querySelector to select via 'class' ('.'):
-  document.querySelector('.dice').style.display = 'none';
+  document.querySelector('.dice1').style.display = 'none';
 
   document.getElementById('score-0').textContent = '0';
   document.getElementById('score-1').textContent = '0';
@@ -46,7 +75,47 @@ function initGame() {
   document.querySelector('.player-1-panel').classList.remove('winner');
   document.querySelector('.player-0-panel').classList.add('active');
 
+  document.querySelector('.btn-roll').style.display = 'block';
+  document.querySelector('.btn-hold').style.display = 'block';
+  //document.querySelector('.set-target-score-field').
+
+  document.getElementById('tscore').value = targetScore;
+
 }
+
+function rollDice(diceDOM) {
+  'use strict';
+  var dice;
+
+  dice = Math.floor(Math.random() * 6) + 1;
+  diceDOM.src = 'dice-' + dice + '.png';
+  
+  // document.querySelector('.btn-roll').style.display = 'none';
+  // document.querySelector('.btn-hold').style.display = 'none';
+  // for (cnt = 0; cnt < 10; cnt += 1) {
+  //   setTimeout(function () {
+  //     diceDOM.style.display = 'none';
+  //   }, 200);
+  //   sleep(200);
+  //   //diceDOM.style.display = 'none';
+  //   //forceRedraw(diceDOM);
+  //   dice = Math.floor(Math.random() * 6) + 1;
+  //   diceDOM.src = 'dice-' + dice + '.png';
+  //   //diceDOM.style.display = 'block';
+  //   setTimeout(function () {
+  //     diceDOM.style.display = 'block';
+  //   }, 200);
+  //   sleep(200);
+  //   //forceRedraw(diceDOM);
+  //   //diceDOM.style.display = 'block';
+  //   //sleep(100);
+  // }
+  // document.querySelector('.btn-roll').style.display = 'block';
+  // document.querySelector('.btn-hold').style.display = 'block';
+
+  return dice;
+}
+
 
 // -------------------------------------------------------
 function switchPlayer() {
@@ -82,25 +151,24 @@ document.querySelector('.btn-roll').addEventListener('click', function () {
   'use strict';
   
   // defines variables we will use later
-  var dice, diceDOM, curPlayerRoundScore;
+  var dice1, dice1DOM, curPlayerRoundScore;
   
   // if game is not active, does nothing
   if (!gameIsActive) {
     return;
   }
     
-  diceDOM = document.querySelector('.dice');
+  dice1DOM = document.querySelector('.dice1');
   curPlayerRoundScore = document.getElementById('current-' + activePlayer);
   
-  // 1. random number
-  dice = Math.floor(Math.random() * 6) + 1;
-  // console.log('dice value: ' + dice);
+  // Display the dice
+  dice1DOM.style.display = 'block';
+  
+  // Roll the dice
+  dice1 = rollDice(dice1DOM);
 
-  // 2. display the result
-  diceDOM.style.display = 'block';
-  diceDOM.src = 'dice-' + dice + '.png';
-
-  if (dice === 6 && previousRoll === 6) {
+  // evaluate the dice
+  if (dice1 === 6 && previousRoll === 6) {
     
     // 3. If the dice is a 6 and also the previous dice value
     //    was a 6, the player loses the entire score and pass
@@ -108,14 +176,15 @@ document.querySelector('.btn-roll').addEventListener('click', function () {
     scores[activePlayer] = 0;
     document.getElementById('score-' + activePlayer).textContent = '0';
     switchPlayer();
-  } else if (dice !== 1) {
+
+  } else if (dice1 !== 1) {
     // 4. update the round score IF the rolled number was NOT a 1
     //    otherwise the player pass the hand
-    roundScore += dice;
+    roundScore += dice1;
     curPlayerRoundScore.textContent = roundScore;
     
     // updates the previousRoll variable with current roll
-    previousRoll = dice;
+    previousRoll = dice1;
     
   } else {
     
@@ -139,22 +208,41 @@ document.querySelector('.btn-hold').addEventListener('click', function () {
   scores[activePlayer] += roundScore;
   document.getElementById('score-' + activePlayer).textContent = scores[activePlayer];
   
-  // check if the player wins (score > 100)
-  if (scores[activePlayer] >= 100) {
+  // check if the player wins (score >= targetScore)
+  if (scores[activePlayer] >= targetScore) {
     document.getElementById('name-' + activePlayer).textContent = 'VINCITORE!';
-    document.querySelector('.dice').style.display = 'none';
+    document.querySelector('.dice1').style.display = 'none';
     document.querySelector('.player-' +
                 activePlayer + '-panel').classList.remove('active');
     document.querySelector('.player-' +
                 activePlayer + '-panel').classList.add('winner');
     
     gameIsActive = false;
-    
+    document.querySelector('.btn-roll').style.display = 'none';
+    document.querySelector('.btn-hold').style.display = 'none';
+
   } else {
     
     // switch the player
     switchPlayer();
     
+  }
+  
+});
+
+// Add an event listener to change target score when related
+// input field lost the focus
+document.getElementById('tscore').addEventListener('blur', function () {
+
+  'use strict';
+  
+  var newTScore;
+  
+  newTScore = parseInt(document.getElementById('tscore').value, 10);
+  if (isNaN(newTScore) || newTScore < 10 || newTScore > 1000) {
+    document.getElementById('tscore').value = targetScore;
+  } else {
+    targetScore = newTScore;
   }
   
 });
