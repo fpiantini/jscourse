@@ -49,27 +49,34 @@
 
   // ---------------------------------------------------
   function updateScore(ifRight, ifWrong) {
-    // closure...
-    return function(curScore, isOK) {
-      return isOK ? (curScore + ifRight) : (curScore + ifWrong);
-    }
+    var currentScore = 0;
+    // closure... Please note how we are using currentScore:
+    // it is inizialized at startup and then updated every
+    // time that the closure is called (it is persistent
+    // like a global but it is not a global)
+    return function (isOK) {
+      if (isOK) {
+        currentScore += ifRight;
+      }
+      else {
+        currentScore += ifWrong;
+      }
+      return currentScore;
+    };
   }
 
-  
-  
   // ---------------------------------------------------
   var userAnswer = '';
   var ok;
   var thePrompt;
-  var currentScore = 0;
   var myScore = updateScore(1, -1);
 
   while (userAnswer !== 'exit') {
 
-    console.clear();
-    var q = Math.floor(Math.random() * 2);
+    //console.clear();
+    var q = Math.floor(Math.random() * questions.length);
     questions[q].display();
-    console.log('Punteggio corrente: ' + currentScore);
+    //console.log('Punteggio corrente: ' + currentScore);
 
     ok = false;
     thePrompt = 'Risposta? (enter \'exit\' to quit the game)';
@@ -78,14 +85,12 @@
       ok = questions[q].checkAnswer(parseInt(userAnswer, 10));
       thePrompt = 'Sbagliato! Prova ancora:';
       if (userAnswer !== 'exit') {
-        currentScore = myScore(currentScore, ok)
-        console.log('Punteggio corrente: ' + currentScore);
+        console.log('Punteggio corrente: ' + myScore(ok));
       }
     }
   }
   console.clear();
-  console.log('Punteggio finale: ' + currentScore);
-
+  //console.log('Punteggio finale: ' + currentScore);
 
 }());
 
