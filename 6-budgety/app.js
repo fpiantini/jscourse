@@ -46,7 +46,22 @@ var uiController = (function () {
 var controller = (function (budgetCtrl, uiCtrl) {
 
   'use strict';
-  var DOM = uiCtrl.getDOMStrings();
+  
+  var setupEventListeners = function () {
+
+    var DOM = uiCtrl.getDOMStrings();
+
+    document.querySelector(DOM.inputButton).
+      addEventListener('click', ctrlAddItem);
+  
+    document.addEventListener('keypress', function (event) {
+    
+      if (event.keyCode === 13 || event.which === 13) {
+        ctrlAddItem();
+      }
+    });
+  };
+  
   var  ctrlAddItem = function () {
 
     // 1. Get the field input data
@@ -63,20 +78,13 @@ var controller = (function (budgetCtrl, uiCtrl) {
 
   };
   
-  document.querySelector(DOM.inputButton).
-    addEventListener('click', ctrlAddItem);
-  
-  document.addEventListener('keypress', function (event) {
-    
-    if (event.keyCode === 13 || event.which === 13) {
-      ctrlAddItem();
+  return {
+    init: function () {
+      console.log('Application has started');
+      setupEventListeners();
     }
-    //console.log(event);
-    
-  });
-  
-  
-  
+  };
   
 }(budgetController, uiController));
 
+controller.init();
