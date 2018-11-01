@@ -113,6 +113,8 @@ var uiController = (function () {
     divIncomeValue: '.budget__income--value',
     divExpenseValue: '.budget__expenses--value',
     divExpensePercentage: '.budget__expenses--percentage',
+    container: '.container'
+    
   };
   
   // PUBLIC INTERFACE ------------------------------------------
@@ -229,6 +231,46 @@ var controller = (function (budgetCtrl, uiCtrl) {
     }
   };
   
+  
+  
+  
+  
+  
+  var ctrlDeleteITem = function (event) {
+    var itemID, splitID, type, id;
+  
+    itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+    if (itemID) {
+      // income-<N> or expense-<N>
+      splitID = itemID.split('-');
+      type = splitID[0];
+      id = splitID[1];
+      
+      // 1. delete the item from the data structure
+      
+      // 2. delete the item from the user interface
+      
+      // 3. update and show the new budget
+      
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   var setupEventListeners = function () {
 
     var DOM = uiCtrl.getDOMStrings();
@@ -237,11 +279,12 @@ var controller = (function (budgetCtrl, uiCtrl) {
       addEventListener('click', ctrlAddItem);
   
     document.addEventListener('keypress', function (event) {
-    
       if (event.keyCode === 13 || event.which === 13) {
         ctrlAddItem();
       }
     });
+    
+    document.querySelector(DOM.container).addEventListener('click', ctrlDeleteITem);
   };
   
   return {
