@@ -16,6 +16,14 @@ var budgetController = (function () {
     this.value = value;
   };
   
+  var calculateTotal = function (type) {
+    data.totals[type] = 0;
+    data.allItems[type].forEach(function(fld) {
+      data.totals[type] += fld.value;
+    });
+  };
+  
+  
   var data = {
     allItems: {
       expense: [],
@@ -24,7 +32,9 @@ var budgetController = (function () {
     totals: {
       expense: 0,
       income: 0
-    }
+    },
+    budget: 0,
+    expPercent: -1
   };
 
   // PUBLIC INTERFACE
@@ -53,11 +63,36 @@ var budgetController = (function () {
       return newItem;
     },
     
+    calculateBudget: function () {
+      
+      // calculate total income  and expenses
+      calculateTotal('income');
+      calculateTotal('expense');
+      
+      // calculate the budget: income - expenses
+      data.budget = data.totals['income'] - data.totals['expense'];
+
+      // calculate the percentage of income that we spent
+      if (data.totals['income'] > 0) {
+        data.expPercent = Math.round((data.totals['expense'] / data.totals['income']) * 100);
+      } else {
+        data.expPercent = -1;
+      }
+      
+      return {
+        budget: data.budget,
+        totalIncome: data.totals.income,
+        totalExpense: data.totals.expense,
+        expensesPercentage: data.expPercent
+      };
+    },
+
     testing: function () {
       console.log(data);
     }
-  };
 
+  };
+  
   
 }());
 
@@ -73,7 +108,11 @@ var uiController = (function () {
     inputValue: '.add__value',
     inputButton: '.add__btn',
     divExpenseList: '.expenses__list',
-    divIncomeList: '.income__list'
+    divIncomeList: '.income__list',
+    divBudgetValue: '.budget__value',
+    divIncomeValue: '.budget__income--value',
+    divExpenseValue: '.budget__expenses--value',
+    divExpensePercentage: '.budget__expenses--percentage',
   };
   
   // PUBLIC INTERFACE ------------------------------------------
@@ -85,7 +124,7 @@ var uiController = (function () {
         // type will be either 'income' or 'expense'
         type: document.querySelector(DOMStrings.inputType).value,
         description: document.querySelector(DOMStrings.inputDescription).value,
-        value: document.querySelector(DOMStrings.inputValue).value
+        value: parseFloat(document.querySelector(DOMStrings.inputValue).value)
       };
     },
     
@@ -112,6 +151,38 @@ var uiController = (function () {
       
     },
     
+    clearFields: function () {
+      var fields, fieldsArray;
+      
+      fields = document.querySelectorAll(
+        DOMStrings.inputDescription + 
+        ', ' + DOMStrings.inputValue);
+      
+      fieldsArray = Array.prototype.slice.call(fields);
+      
+      fieldsArray.forEach(function (fld, ndx, array) {
+        fld.value = "";
+        
+      });
+      
+      fieldsArray[0].focus();
+    },
+
+    displayBudget: function (currentBudget) {
+      document.querySelector(DOMStrings.divBudgetValue).textContent =
+        ((currentBudget.budget >= 0) ? '+ ' : '- ') + currentBudget.budget.toFixed(2);
+      document.querySelector(DOMStrings.divIncomeValue).textContent =
+        '+ ' + currentBudget.totalIncome.toFixed(2);
+      document.querySelector(DOMStrings.divExpenseValue).textContent =
+        '- ' + currentBudget.totalExpense.toFixed(2);
+      if (currentBudget.expensesPercentage >= 0) {
+        document.querySelector(DOMStrings.divExpensePercentage).textContent =
+          currentBudget.expensesPercentage + '%';
+      } else {
+        document.querySelector(DOMStrings.divExpensePercentage).innerHTML= '&nbsp;';
+      }
+    },
+    
     getDOMStrings: function () {
       return DOMStrings;
     }
@@ -127,6 +198,14 @@ var controller = (function (budgetCtrl, uiCtrl) {
 
   'use strict';
   
+  var updateBudget = function () {
+
+    // Calculate and display the budget
+    uiCtrl.displayBudget(budgetCtrl.calculateBudget());
+
+  };
+  
+  
   var  ctrlAddItem = function () {
 
     var input, newItem;
@@ -134,18 +213,20 @@ var controller = (function (budgetCtrl, uiCtrl) {
     // 1. Get the field input data
     input = uiCtrl.getInput();
     
-    // 2. Add the item to the budget controller
-    newItem =
+    if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
+      // 2. Add the item to the budget controller
+      newItem =
         budgetCtrl.addItem(input.type, input.description, input.value);
     
-    // 3. Add the new item to the UI
-    uiCtrl.addListItem(newItem, input.type)
-    // 4. Calcualate the budget
+      // 3. Add the new item to the UI
+      uiCtrl.addListItem(newItem, input.type)
     
-    // 5. Display the budget on the UI
+      // 4. Clear the fields
+      uiCtrl.clearFields();
     
-    // test...
-    budgetCtrl.testing();
+      // 5. Update the budget
+      updateBudget();
+    }
   };
   
   var setupEventListeners = function () {
@@ -167,6 +248,7 @@ var controller = (function (budgetCtrl, uiCtrl) {
     init: function () {
       console.log('Application has started');
       setupEventListeners();
+      updateBudget();
     }
   };
   
