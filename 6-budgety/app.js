@@ -23,7 +23,6 @@ var budgetController = (function () {
     });
   };
   
-  
   var data = {
     allItems: {
       expense: [],
@@ -61,6 +60,30 @@ var budgetController = (function () {
       
       // return the new element
       return newItem;
+    },
+    
+    
+    deleteItem: function(type, id) {
+      var ids, index;
+
+      // alternativamente:
+      //var ndx = 0;
+      //for (ndx = 0; ndx < data.allItems[type].length; ndx += 1) {
+      //  if (data.allItems[type].id === id) {
+      //    break;
+      //  }
+      //}
+      //if (ndx < data.allItems[type].length) {
+      //  data.allItems[type].splice(index, 1);    
+      //}
+      ids = data.allItems[type].map(function(current) {
+        return current.id
+      });
+      index = ids.indexOf(id);
+      
+      if (index >= 0) {
+        data.allItems[type].splice(index, 1);
+      }
     },
     
     calculateBudget: function () {
@@ -152,7 +175,13 @@ var uiController = (function () {
       divid.insertAdjacentHTML('beforeend', newHtml);
       
     },
-    
+
+    // --------------------------------------
+    deleteListItem: function (selectorId) {
+      var el = document.getElementById(selectorId);
+      el.parentElement.removeChild(el);
+    },
+
     clearFields: function () {
       var fields, fieldsArray;
       
@@ -172,7 +201,7 @@ var uiController = (function () {
 
     displayBudget: function (currentBudget) {
       document.querySelector(DOMStrings.divBudgetValue).textContent =
-        ((currentBudget.budget >= 0) ? '+ ' : '- ') + currentBudget.budget.toFixed(2);
+        ((currentBudget.budget >= 0) ? '+ ' : '- ') + Math.abs(currentBudget.budget).toFixed(2);
       document.querySelector(DOMStrings.divIncomeValue).textContent =
         '+ ' + currentBudget.totalIncome.toFixed(2);
       document.querySelector(DOMStrings.divExpenseValue).textContent =
@@ -202,11 +231,21 @@ var controller = (function (budgetCtrl, uiCtrl) {
   
   var updateBudget = function () {
 
+    console.log('updateBudget() called');
     // Calculate and display the budget
     uiCtrl.displayBudget(budgetCtrl.calculateBudget());
 
   };
-  
+
+  var updatePercentages = function () {
+    
+    // 1. calculate percentages
+    
+    // 2. Read percentages from the budget controller
+    
+    // 3. update the UI with the new percentages
+    
+  };
   
   var  ctrlAddItem = function () {
 
@@ -228,13 +267,12 @@ var controller = (function (budgetCtrl, uiCtrl) {
     
       // 5. Update the budget
       updateBudget();
+      
+      // 6. Calculate and update the percentages
+      updatePercentages();
+      
     }
   };
-  
-  
-  
-  
-  
   
   var ctrlDeleteITem = function (event) {
     var itemID, splitID, type, id;
@@ -247,29 +285,19 @@ var controller = (function (budgetCtrl, uiCtrl) {
       id = splitID[1];
       
       // 1. delete the item from the data structure
+      budgetCtrl.deleteItem(type, parseInt(id, 10));
       
       // 2. delete the item from the user interface
+      uiCtrl.deleteListItem(itemID);
       
       // 3. update and show the new budget
-      
+      updateBudget();
+
+      // 4. Calculate and update the percentages
+      updatePercentages();
+
     }
   };
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   var setupEventListeners = function () {
 
