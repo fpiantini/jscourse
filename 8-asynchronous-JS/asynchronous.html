@@ -67,24 +67,38 @@
             });
         };
 
-        getIds()
-        .then(IDs => {
+        // getIds()
+        // .then(IDs => {
+        //     console.log(IDs);
+        //     return getRecipe(IDs[2]);
+        // })
+        // .then(([ID, recipe]) => {
+        //     //const [ID, recipe] = recipeData;
+        //     console.log(`${ID}: ${recipe.title}`);
+        //     return getAnother(recipe.publisher);
+        // })
+        // .then(([ID, recipe]) => {
+        //     console.log(`${ID}: ${recipe.title}`);            
+        // })
+        // .catch(error => {
+        //     // this catch all the rejects from all the promises
+        //     // in the promise chain
+        //     console.log(`Error: ${error}`);
+        // });
+
+        // ASYNC / AWAIT
+        async function getRecipesAW() {
+            const IDs = await getIds();
             console.log(IDs);
-            return getRecipe(IDs[2]);
-        })
-        .then(([ID, recipe]) => {
-            //const [ID, recipe] = recipeData;
+            const [ID, recipe] = await getRecipe(IDs[2]);
             console.log(`${ID}: ${recipe.title}`);
-            return getAnother(recipe.publisher);
-        })
-        .then(([ID, recipe]) => {
-            console.log(`${ID}: ${recipe.title}`);            
-        })
-        .catch(error => {
-            // this catch all the rejects from all the promises
-            // in the promise chain
-            console.log(`Error: ${error}`);
-        });
+            const [ID2, recipe2] = await getAnother(recipe.publisher);
+            console.log(`${ID2}: ${recipe2.title}`);
+
+            return recipe2;
+        }
+        getRecipesAW()
+        .then(result => console.log(`${result.title} is the best ever!`));
 
     </script>
 </body>
