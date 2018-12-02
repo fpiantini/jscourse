@@ -9,7 +9,83 @@
 <body>
     <h1>Asynchronous JavaScript</h1>
     <script>
-        
+        // const second = () => {
+        //     setTimeout(() => {
+        //         console.log("Async Hey There");
+        //     }, 2000);
+        // }
+        // const first = () => {
+        //     console.log('Hey There');
+        //     second();
+        //     console.log('The end');
+        // }
+        // first();
+
+        // function getRecipe() {
+        //     setTimeout(() => {
+        //         const recipeId = [ 342, 433, 222, 764 ];
+        //         console.log(recipeId);
+
+        //         setTimeout(id => {
+        //             const recipe = {title: 'fresh tomato pasta', publisher: 'Francesco'};
+        //             console.log(`${id}: ${recipe.title}`);
+
+        //             setTimeout(publisher => {
+        //                 const recipe = {title: 'Pizza margherita', publisher: 'Francesco'};
+        //                 console.log(recipe);
+        //             }, 1500, recipe.publisher);
+
+        //         }, 1000, recipeId[2]);
+
+        //     }, 1500);
+        // }
+        // getRecipe();
+
+        const getIds = () => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve([ 342, 433, 222, 764 ]);
+                    //reject(12345);
+                }, 1500);
+            });
+        };
+
+        const getRecipe = recId => {
+            return new Promise((resolve, reject) => {
+                setTimeout(ID => {
+                    resolve([ID, {title: 'fresh tomato pasta', publisher: 'Francesco'}]);
+                    //reject('Prova errore');
+                }, 1500, recId);
+            });
+        };
+
+        const getAnother = publisher => {
+            return new Promise((resolve, reject) => {
+                setTimeout(publisher => {
+                    resolve([77, {title: 'Pizza margherita', publisher: 'Francesco'}]);
+                }, 1500, publisher);
+            });
+        };
+
+        getIds()
+        .then(IDs => {
+            console.log(IDs);
+            return getRecipe(IDs[2]);
+        })
+        .then(([ID, recipe]) => {
+            //const [ID, recipe] = recipeData;
+            console.log(`${ID}: ${recipe.title}`);
+            return getAnother(recipe.publisher);
+        })
+        .then(([ID, recipe]) => {
+            console.log(`${ID}: ${recipe.title}`);            
+        })
+        .catch(error => {
+            // this catch all the rejects from all the promises
+            // in the promise chain
+            console.log(`Error: ${error}`);
+        });
+
     </script>
 </body>
 </html>
