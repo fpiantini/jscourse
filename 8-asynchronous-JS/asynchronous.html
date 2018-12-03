@@ -41,31 +41,31 @@
         // }
         // getRecipe();
 
-        const getIds = () => {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve([ 342, 433, 222, 764 ]);
-                    //reject(12345);
-                }, 1500);
-            });
-        };
+        // const getIds = () => {
+        //     return new Promise((resolve, reject) => {
+        //         setTimeout(() => {
+        //             resolve([ 342, 433, 222, 764 ]);
+        //             //reject(12345);
+        //         }, 1500);
+        //     });
+        // };
 
-        const getRecipe = recId => {
-            return new Promise((resolve, reject) => {
-                setTimeout(ID => {
-                    resolve([ID, {title: 'fresh tomato pasta', publisher: 'Francesco'}]);
-                    //reject('Prova errore');
-                }, 1500, recId);
-            });
-        };
+        // const getRecipe = recId => {
+        //     return new Promise((resolve, reject) => {
+        //         setTimeout(ID => {
+        //             resolve([ID, {title: 'fresh tomato pasta', publisher: 'Francesco'}]);
+        //             //reject('Prova errore');
+        //         }, 1500, recId);
+        //     });
+        // };
 
-        const getAnother = publisher => {
-            return new Promise((resolve, reject) => {
-                setTimeout(publisher => {
-                    resolve([77, {title: 'Pizza margherita', publisher: 'Francesco'}]);
-                }, 1500, publisher);
-            });
-        };
+        // const getAnother = publisher => {
+        //     return new Promise((resolve, reject) => {
+        //         setTimeout(publisher => {
+        //             resolve([77, {title: 'Pizza margherita', publisher: 'Francesco'}]);
+        //         }, 1500, publisher);
+        //     });
+        // };
 
         // getIds()
         // .then(IDs => {
@@ -87,18 +87,56 @@
         // });
 
         // ASYNC / AWAIT
-        async function getRecipesAW() {
-            const IDs = await getIds();
-            console.log(IDs);
-            const [ID, recipe] = await getRecipe(IDs[2]);
-            console.log(`${ID}: ${recipe.title}`);
-            const [ID2, recipe2] = await getAnother(recipe.publisher);
-            console.log(`${ID2}: ${recipe2.title}`);
+        // async function getRecipesAW() {
+        //     const IDs = await getIds();
+        //     console.log(IDs);
+        //     const [ID, recipe] = await getRecipe(IDs[2]);
+        //     console.log(`${ID}: ${recipe.title}`);
+        //     const [ID2, recipe2] = await getAnother(recipe.publisher);
+        //     console.log(`${ID2}: ${recipe2.title}`);
 
-            return recipe2;
+        //     return recipe2;
+        // }
+        // getRecipesAW()
+        // .then(result => console.log(`${result.title} is the best ever!`)// );
+
+        const corsproxy = 'https://api.codetabs.com/v1/proxy?quest=';
+
+        // ****************** Fetch and Promises ************************
+        function getWeather(whoei) {
+            const apiurl = 'https://www.metaweather.com/api/location/' + whoei + '/'
+
+            fetch(corsproxy + apiurl)
+            .then (wdata => {
+                return wdata.json();
+            })
+            .then (data => {
+                const today = data.consolidated_weather[0];
+                console.log(`Today temperatures in ${data.title} stay between ${today.min_temp} and ${today.max_temp}`);
+            })
+            .catch(error => console.log(error));
         }
-        getRecipesAW()
-        .then(result => console.log(`${result.title} is the best ever!`));
+
+        getWeather(721943);
+        getWeather(44418);
+
+        // **************** Fetch and Async/Await *********************
+        async function getWeatherAW(whoei) {
+            try {
+                const apiurl = 'https://www.metaweather.com/api/location/' + whoei + '/'
+
+                const result = await fetch(corsproxy + apiurl);
+                const data = await result.json();
+                const tomorrow = data.consolidated_weather[1];
+                console.log(`Tomorrow temperatures in ${data.title} will stay between ${tomorrow.min_temp} and ${tomorrow.max_temp}`);
+            } catch(error) {
+                console.log(error);
+            }
+        }
+
+        getWeatherAW(721943);
+        getWeatherAW(44418);
+
 
     </script>
 </body>
