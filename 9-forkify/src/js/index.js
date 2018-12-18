@@ -1,8 +1,8 @@
-import { elements } from './views/base.js';
+import { elements } from './views/base';
 import Search from './models/Search';
-import * as SearchView from './views/searchView';
+import * as searchView from './views/searchView';
 
-/**  glovas state of the app 
+/**  globas state of the app 
  * - Search object
  * - Current recipe object
  * - Shopping list object
@@ -13,19 +13,21 @@ const state = {};
 // ---------------------------------------------------------------
 const controlSearch = async () => {
     // - get the query from the view
-    const query = 'pizza'; // TODO
+    const query = searchView.getInput();
 
     if (query) {
         // - new search object and add it to state
         state.search = new Search(query);
 
         // - prepare UI for result
+        searchView.clearInput();
+        searchView.clearResults();
 
         // - Search for recipes
         await state.search.getResult();
 
         // - render results on UI
-        console.log(state.search.result);
+        searchView.renderResults(state.search.result);
     }
 }
 
