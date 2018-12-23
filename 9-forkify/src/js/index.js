@@ -1,5 +1,6 @@
-import { elements } from './views/base';
+import { elements, renderLoader, clearLoader } from './views/base';
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
 
 /**  globas state of the app 
@@ -11,10 +12,11 @@ import * as searchView from './views/searchView';
 const state = {};
 
 // ---------------------------------------------------------------
+// SEARCH CONTROLLER
+// ---------------------------------------------------------------
 const controlSearch = async () => {
     // - get the query from the view
     const query = searchView.getInput();
-
     if (query) {
         // - new search object and add it to state
         state.search = new Search(query);
@@ -22,12 +24,19 @@ const controlSearch = async () => {
         // - prepare UI for result
         searchView.clearInput();
         searchView.clearResults();
+        renderLoader(elements.searchRes);
 
         // - Search for recipes
-        await state.search.getResult();
+        try {
+            await state.search.getResult();
 
-        // - render results on UI
-        searchView.renderResults(state.search.result);
+            // - render results on UI
+            clearLoader();
+            searchView.renderResults(state.search.result);
+        } catch (err) {
+            clearLoader();
+            alert(`Error searching for recipes: ${err}`);
+        }
     }
 }
 
@@ -36,4 +45,48 @@ elements.searchForm.addEventListener('submit', e => {
     controlSearch();
 });
 
+elements.searchResPages.addEventListener('click', e => {
+    const btn = e.target.closest('.btn-inline');
+    if (btn) {
+        const goToPage = parseInt(btn.dataset.goto);
+        searchView.clearResults();
+        searchView.renderResults(state.search.result, goToPage);
+    }
+});
 
+
+// ---------------------------------------------------------------
+// RECIPE CONTROLLER
+// ---------------------------------------------------------------
+const controlRecipe = async () => {
+    // Get hash ID for the URL
+    const id = window.location.hash.replace('#', '');
+    console.log(id);
+    if (id) {
+        // prepare UI for changes
+
+        // create the recipe object
+        state.recipe = new Recipe(id);
+        
+        try {
+            // get recipe data and parse ingredients
+            await state.recipe.getRecipe();
+            state.recipe.parseIngredients();
+
+            // calculate servings and time
+            state.recipe.calcTime();
+            state.recipe.calcServings();
+
+            // render recipe
+            console.log(state.recipe);
+        } catch(err) {
+            alert(`Error getting recipe data: ${err}`);
+        }
+
+    }
+
+}
+
+//window.addEventListener('hashchange', controlRecipe);
+//window.addEventListener('load', controlRecipe);
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
