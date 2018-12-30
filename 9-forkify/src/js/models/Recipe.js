@@ -15,7 +15,7 @@ export default class Recipe {
             this.url = res.data.recipe.source_url;
             this.ingredients = res.data.recipe.ingredients;
         } catch (error) {
-            alert(error);
+            alert(`getRecipe() error: ${error}`);
         }
     }
 
