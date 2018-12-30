@@ -65,12 +65,12 @@ export const renderRecipe = recipe => {
             <span class="recipe__info-text"> servings</span>
 
             <div class="recipe__info-buttons">
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-decrease">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-minus"></use>
                     </svg>
                 </button>
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-increase">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-plus"></use>
                     </svg>
@@ -79,7 +79,7 @@ export const renderRecipe = recipe => {
 
         </div>
         <button class="recipe__love">
-            <svg class="header__likes">
+            <svg class="header__likes btn-like">
                 <use href="img/icons.svg#icon-heart-outlined"></use>
             </svg>
         </button>
@@ -90,16 +90,6 @@ export const renderRecipe = recipe => {
 
             ${recipe.ingredients.map(el => createIngredient(el)).join('')}
 
-            <li class="recipe__item">
-                <svg class="recipe__icon">
-                    <use href="img/icons.svg#icon-check"></use>
-                </svg>
-                <div class="recipe__count">1000</div>
-                <div class="recipe__ingredient">
-                    <span class="recipe__unit">g</span>
-                    pasta
-                </div>
-            </li>
         </ul>
 
         <button class="btn-small recipe__btn">
@@ -129,5 +119,14 @@ export const renderRecipe = recipe => {
 
 };
 
+export const updateServingsIngredients = recipe => {
+    // update servings
+    document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
 
+    // update ingredients
+    const countElements = Array.from(document.querySelectorAll('.recipe__count'));
+    countElements.forEach((el, i) => {
+        el.textContent = formatCount(recipe.ingredients[i].count);
+    });
+}
 
