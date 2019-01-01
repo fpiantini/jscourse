@@ -15,7 +15,6 @@ import * as likesView from './views/likesView';
  * - Liked recipes
 */
 const state = {};
-window.state = state;
 
 // ---------------------------------------------------------------
 // SEARCH CONTROLLER
@@ -102,8 +101,6 @@ const controlRecipe = async () => {
 
 }
 
-//window.addEventListener('hashchange', controlRecipe);
-//window.addEventListener('load', controlRecipe);
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 
 // handling recipe button clicks
@@ -164,6 +161,15 @@ elements.shopping.addEventListener('click', e => {
 // ---------------------------------------------------------------
 // LIKES CONTROLLER
 // ---------------------------------------------------------------
+
+// Restores liked recipes on page load
+window.addEventListener('load', () => {
+    state.likes = new Likes();
+    state.likes.readStorage();
+    state.likes.likes.forEach(el => likesView.renderLike(el));
+    likesView.toggleLikesMenu(state.likes.getNumLikes());
+});
+
 const controlLike = () => {
     // create a new like object if there is none yet
     if (!state.likes) state.likes = new Likes();
